@@ -155,3 +155,36 @@ var wow = new WOW({
 	mobile: false // trigger animations on mobile devices (default is true)
 });
 wow.init();
+
+
+/* ========================================================================= */
+/*	Modal Services
+/* ========================================================================= */
+
+ function abrirModal(servicio) {
+    var titulos = {
+      contable: "Contable"
+    };
+
+    var descripciones = {
+      contable: "Brindamos soluciones fiscales y contables eficientes, enfocadas en la correcta toma de decisiones y cumplimiento normativo."
+    };
+
+    var imagenes = {
+      contable: "assets/img/fondo-negro.jpg" // Asegúrate que el archivo exista
+    };
+
+    document.getElementById("modalServicioLabel").textContent = titulos[servicio];
+    document.getElementById("modalServicioTexto").textContent = descripciones[servicio];
+    document.getElementById("modalServicioImagen").src = imagenes[servicio];
+
+    $('#modalServicio').modal('show');
+  }
+
+
+/* ========================================================================= */
+/*	Close Modal
+/* ========================================================================= */
+  $(".cerrarModal").click(function(){
+  $("#modalContractCandidatesPre").modal('hide')
+});

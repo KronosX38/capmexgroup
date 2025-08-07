@@ -1050,3 +1050,29 @@ a:hover {
 .copyright p {
   margin-top: 10px;
 }
+
+
+/*=================================================================
+  Services Modal
+==================================================================*/
+
+.service-clickable {
+	cursor: pointer;
+	transition: transform 0.2s ease;
+}
+.service-clickable:hover {
+	transform: scale(1.03);
+}
+
+#modalServicio .modal-body {
+  padding: 20px;
+}
+
+#modalServicioImagen {
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.modal-footer button{
+  background-color: #052858;
+}
