@@ -846,7 +846,7 @@ a:hover {
 ==================================================================*/
 .call-to-action-2 {
   padding: 100px 0;
-  background-image: url("../img/fondo-negro.jpg");
+  background-image: url("/img/fondo-negro.jpg");
   background-size: cover;
   color: #fff;
 }
