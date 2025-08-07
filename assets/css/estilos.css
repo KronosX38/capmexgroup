@@ -26,6 +26,14 @@ h6 {
   color: #afbac4;
 }
 
+p {
+  font-family: "Quattrocento Sans", sans-serif;
+  font-size: 16px;
+}
+
+.logo{
+  fill: #fff;
+}
 
 /**
  * ----------------------------------------
@@ -69,9 +77,6 @@ h1.text-shadow-pop-bottom {
  * ----------------------------------------
  */
 
-p {
-  font-family: "Quattrocento Sans", sans-serif;
-}
 
 /*=================================================================
   Basic Setup
@@ -536,7 +541,7 @@ a:hover {
 }
 
 .single-page-header {
-  background-image: url("../images/about/about-header.jpg");
+  background-image: url("./images/about/about-header.jpg");
   background-size: cover;
   padding: 140px 0 70px;
   text-align: center;
@@ -581,7 +586,7 @@ a:hover {
 .navigation .navigation-menu a {
   padding-left: 15px !important;
   padding-right: 15px !important;
-  font-size: 16px;
+  font-size: 20px;
   color: #737f8a;
 }
 .navigation .navigation-menu a:hover, .navigation .navigation-menu a:focus {
@@ -696,4 +701,352 @@ a:hover {
   width: 100%;
   position: absolute;
   z-index: -1;
+}
+
+/*=================================================================
+  About us section
+==================================================================*/
+.about .block {
+  background: #242930;
+  padding: 30px;
+  border-bottom: 3px solid transparent;
+  transition: 0.5s all;
+  margin-bottom: 20px;
+
+}
+.about .block:hover {
+  border-bottom: 10px solid #911c25;
+ 
+}
+.about .block:hover .icon-box {
+  transform: translateY(-10px);
+}
+.about .block .icon-box {
+  position: relative;
+  width: 160px;
+  height: 92.38px;
+  background-color: transparent;
+  margin: 46.19px auto 60px;
+  padding: 20px 0;
+  border-left: 2px solid rgb(149, 198, 255);
+  border-right: 2px solid rgb(149, 198, 255);
+  font-size: 50px;
+  transform: translateZ(0px);
+  transition-duration: 0.3s;
+  transition-property: transform;
+}
+.about .block .icon-box:after, .about .block .icon-box:before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 113.14px;
+  height: 113.14px;
+  background-color: inherit;
+  left: 20.4315px;
+  transform: scaleY(0.5774) rotate(-45deg);
+}
+.about .block .icon-box:before {
+  top: -56.5685px;
+  border-top: 2px solid rgb(149, 198, 255);
+  border-right: 2px solid rgb(149, 198, 255);
+}
+.about .block .icon-box:after {
+  bottom: -56.5685px;
+  border-bottom: 2px solid rgb(149, 198, 255);
+  border-left: 2px solid rgb(149, 198, 255);
+}
+.about .block .icon-box h3 {
+  color: #afbac4;
+}
+
+.icon-box{
+  color: #95c6ff;
+}
+
+.equal-height{
+  height: 500px; /* o min-height */
+  overflow: auto;
+}
+
+.p-about1 {
+  font-size: 18px;
+}
+
+.p-about2 {
+  font-size: 18px;
+}
+
+.callaction1{
+  font-size: 20px !important;
+}
+
+/*=================================================================
+  About us 2 section
+==================================================================*/
+.about-2 .content-block {
+  padding: 35px 40px;
+}
+@media (max-width: 768px) {
+  .about-2 .content-block {
+    padding: 40px 15px;
+  }
+}
+.about-2 .content-block .media {
+  margin-top: 25px;
+}
+.about-2 .content-block .media .pull-left {
+  padding-right: 15px;
+}
+.about-2 .content-block .media i {
+  font-size: 30px;
+  color: #95c6ff;
+}
+.about-2 .content-block .media h4 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/*=================================================================
+ Call To Action 1
+==================================================================*/
+.call-to-action {
+  padding: 100px 0;
+  background-image: url("../img/fondo-negro.jpg");
+  background-size: cover;
+  color: #fff;
+}
+.call-to-action h2 {
+  font-weight: 700;
+  color: #ffffff;
+}
+.call-to-action p {
+  font-size: 16px;
+  color: #ffffff;
+}
+.call-to-action .btn-main {
+  margin-top: 20px;
+}
+
+.btn-main-call {
+  background: #317ed6;
+  color: #fff;
+  display: inline-block;
+  font-size: 14px;
+  letter-spacing: 1px;
+  padding: 10px 35px;
+  text-transform: uppercase;
+}
+.btn-main-call:hover {
+  background: #0B2B59;
+  color: #fff;
+}
+
+/*=================================================================
+ Call To Action 2
+==================================================================*/
+.call-to-action-2 {
+  padding: 100px 0;
+  background-image: url("../img/fondo-negro.jpg");
+  background-size: cover;
+  color: #fff;
+}
+.call-to-action-2 h2 {
+  line-height: 1.5;
+}
+.call-to-action-2 p {
+  color: #fff;
+}
+.call-to-action-2 .btn-main {
+  margin-top: 20px;
+}
+
+.contact-us {
+  padding-top: 50px;
+}
+
+.contact-form {
+  margin-bottom: 60px;
+}
+.contact-form .form-control {
+  background-color: transparent;
+  border: 1px solid rgba(236, 239, 241, 0.07);
+  height: 45px;
+}
+.contact-form textarea.form-control {
+  padding: 10px;
+  height: 120px;
+}
+
+.contact-form input:hover,
+.contact-form textarea:hover,
+#contact-submit:hover {
+  border-color: #57cbcc;
+}
+
+#contact-submit {
+  border: 1px solid rgba(236, 239, 241, 0.07);
+  background: #57cbcc;
+  padding: 12px 0;
+  width: 100%;
+  margin: 0;
+}
+
+.google-map #map_canvas {
+  height: 400px;
+}
+
+.contact-info p {
+  margin-bottom: 25px;
+}
+
+.con-info {
+  margin-bottom: 20px;
+}
+
+.con-info i,
+.con-info span {
+  float: left;
+}
+
+.con-info span {
+  margin: -5px 0 0 15px;
+}
+
+.error {
+  display: none;
+  padding: 10px;
+  color: #D8000C;
+  border-radius: 4px;
+  font-size: 13px;
+  background-color: #FFBABA;
+}
+
+.success {
+  background-color: #6cb670;
+  border-radius: 4px;
+  color: #fff;
+  display: none;
+  font-size: 13px;
+  padding: 10px;
+}
+
+#map {
+  height: 370px;
+  width: 100%;
+}
+
+/*=================================================================
+  Services section
+==================================================================*/
+.service-block {
+  padding: 60px 20px;
+  border-left: 1px solid rgba(236, 239, 241, 0.07);
+  border-top: 1px solid rgba(236, 239, 241, 0.07);
+  margin-bottom: 40px;
+  box-shadow: 2px 2px 5px rgba(44, 44, 44, 0.3), 13px 13px 0 rgb(11, 43, 89);;
+  background-color: rgba(112, 112, 112, 0.3);
+}
+.service-block .service-icon {
+  margin-bottom: 10px;
+  font-size: 50px;
+}
+
+/*=================================================================
+  Services section 2
+==================================================================*/
+.service-2 .service-item {
+  border: 1px solid #eee;
+  margin-bottom: 30px;
+  padding: 50px 20px;
+  transition: all 0.3s ease 0s;
+}
+.service-2 .service-item:hover {
+  box-shadow: 0 5px 65px 0 rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 5px 65px 0 rgba(0, 0, 0, 0.15);
+}
+.service-2 .service-item:hover i {
+  background: #fff;
+  color: #57cbcc;
+}
+.service-2 .service-item i {
+  font-size: 30px;
+  display: inline-block;
+  background: #57cbcc none repeat scroll 0 0;
+  border-radius: 30px;
+  box-shadow: 0 5px 6px 0 rgba(0, 0, 0, 0.1);
+  color: #fff;
+  height: 55px;
+  line-height: 55px;
+  margin-bottom: 20px;
+  width: 55px;
+  transition: all 0.3s ease 0s;
+}
+
+
+
+/*=================================================================
+  Footer section
+==================================================================*/
+.social-icon {
+  padding: 60px 0 35px;
+}
+.social-icon ul {
+  text-align: center;
+}
+.social-icon ul li {
+  margin-bottom: 4px;
+}
+.social-icon ul li:hover a {
+  background-color: #0B2B59;
+  transform: rotateY(0deg);
+}
+.social-icon ul li:hover a i {
+  color: #fff;
+  opacity: 1;
+  filter: alpha(opacity=100);
+  transform: rotateY(0deg);
+}
+.social-icon ul li a {
+  background-color: #95c6ff;
+  border: 1px solid transparent;
+  display: block;
+  height: 70px;
+  width: 70px;
+
+  transform: rotateY(180deg);
+  transition: all 400ms ease-out 0s;
+}
+@media (max-width: 768px) {
+  .social-icon ul li a {
+    width: 55px;
+    height: 55px;
+  }
+}
+.social-icon ul li a i {
+  color: #052858;
+  display: inline-block;
+  font-size: 32px;
+  line-height: 70px;
+  margin: 0;
+  opacity: 0.6;
+  filter: alpha(opacity=100);
+  transform: rotateY(180deg);
+  transition: all 400ms ease-out 0s;
+}
+@media (max-width: 768px) {
+  .social-icon ul li a i {
+    line-height: 55px;
+    font-size: 25px;
+  }
+}
+
+.copyright {
+  padding: 20px 0;
+  color: #fff;
+}
+.copyright img {
+  margin-bottom: 15px;
+}
+.copyright p {
+  margin-top: 10px;
 }
