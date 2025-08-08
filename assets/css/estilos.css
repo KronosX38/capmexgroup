@@ -590,6 +590,17 @@ a:hover {
   font-size: 20px;
   color: #737f8a;
 }
+
+.nav-drop{
+  background-color: inherit;
+  color: #737f8a;
+}
+
+.nav-drop:hover{
+  
+  color: #95c6ff !important;
+}
+
 .navigation .navigation-menu a:hover, .navigation .navigation-menu a:focus {
   background: transparent;
   color: #95c6ff !important;
