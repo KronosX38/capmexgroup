@@ -887,14 +887,18 @@ a:hover {
 }
 
 .contact-form input:hover,
-.contact-form textarea:hover,
-#contact-submit:hover {
-  border-color: #57cbcc;
+.contact-form textarea:hover {
+  border-color: #578ecc;
+}
+
+#contact-submit:hover{
+  border-color: #578ecc;
+  background: #0B2B59;
 }
 
 #contact-submit {
   border: 1px solid rgba(236, 239, 241, 0.07);
-  background: #57cbcc;
+  background: #111370cb;
   padding: 12px 0;
   width: 100%;
   margin: 0;
@@ -995,9 +999,6 @@ a:hover {
   width: 15%;
   margin: auto;
 }
-
-
-
 
 
 /*=================================================================

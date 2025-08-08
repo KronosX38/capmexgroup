@@ -5,6 +5,7 @@
 html {
   background-color: #353b43;
   color: #737f8a;
+
 }
 
 body {
@@ -18,6 +19,7 @@ body {
 .mapadiv{
     width: 50%;
     margin: auto;
+     
 }
 
 .cls-1 {
@@ -46,7 +48,18 @@ body {
   --bs-popover-header-color: white;
   --bs-popover-body-color: #eee;
   --bs-popover-max-width: 250px;
+ 
 }
+
+.border-contact{
+border-bottom: 2px solid #fff;
+width: 50%;
+padding: 2px;
+margin-bottom: 10px;
+}
+
+
+
 
 @media(max-width:1200px) {
   .mapadiv{
