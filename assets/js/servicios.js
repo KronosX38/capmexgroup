@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Reingeniería fiscal.',
         'Implementación de asesoría fiscal especializada con estrategias financieras y fiscales.'
       ],
-      imagen: './assets/img/fondo-negro.jpg'
+      imagen: './assets/img/servicio-contable.png'
     },
     'juridico': {
       titulo: 'Servicio Jurídico',
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Interposición de medio de defensa en materia fiscal, recursos de revocación, recursos de inconformidad y consultas especializadas en materia fiscal.',
         'Tramitación y gestión de quejas y acuerdos conclusivos ante la Procuraduría de la Defensa del Contribuyente.'
       ],
-      imagen: './assets/img/fondo-negro.jpg'
+      imagen: './assets/img/servicio-juridico.png'
     },
     'capital-humano': {
       titulo: 'Capital Humano',
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Administración de nómina.',
         'Remuneración a socios, accionistas y personal.'
       ],
-      imagen: './assets/img/fondo-negro.jpg'
+      imagen: './assets/img/servicio-caphumano.png'
     },
     'corporativo': {
       titulo: 'Corporativo',
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Back Office legal para financieras.',
         'Back Office legal para inmobiliarias.'
       ],
-      imagen: './assets/img/fondo-negro.jpg'
+      imagen: './assets/img/servicio-corporativo.png'
     },
     'inversiones': {
       titulo: 'Inversiones',
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Creación de portafolios de inversión.',
         'Desarrollo de proyectos inmobiliarios.'
       ],
-      imagen: './assets/img/fondo-negro.jpg'
+      imagen: './assets/img/servicio-inversiones.png'
     },
     'financieros': {
       titulo: 'Servicios Financieros',
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Factoraje financiero.',
         'Fideicomisos.'
       ],
-      imagen: './assets/img/fondo-negro.jpg'
+      imagen: './assets/img/servicios-financieros.png'
     }
   };
 

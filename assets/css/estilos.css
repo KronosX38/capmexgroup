@@ -713,10 +713,12 @@ a:hover {
   border-bottom: 3px solid transparent;
   transition: 0.5s all;
   margin-bottom: 20px;
+  z-index: 1;
+  position: relative;
 
 }
 .about .block:hover {
-  border-bottom: 10px solid #911c25;
+  border-bottom: 10px solid #911c25 !important;
  
 }
 .about .block:hover .icon-box {
@@ -988,6 +990,13 @@ a:hover {
   width: 55px;
   transition: all 0.3s ease 0s;
 }
+
+.icoimag{
+  width: 15%;
+  margin: auto;
+}
+
+
 
 
 
