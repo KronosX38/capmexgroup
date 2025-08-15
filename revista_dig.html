@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Revistas CAPMEX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Catálogo de revistas CAPMEX — consulta ediciones por fecha o tema." />
+  <style>
+    :root{ --bg:#0f0f10; --panel:#161617; --txt:#eaeaea; --muted:#a0a0a0; --maxw:1200px; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:18px 16px}
+
+    header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+    h1{margin:0;font-size:clamp(20px,2.6vw,28px)}
+    .bar{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+    .bar input,.bar select{background:#1f1f21;color:var(--txt);border:1px solid #2a2a2c;border-radius:10px;padding:10px 12px;min-width:160px}
+
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+    .card{background:var(--panel);border:1px solid #252528;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+    .thumb{aspect-ratio:2/3;background:#0b0b0b;display:block;position:relative;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
+    .card:hover .thumb img{transform:scale(1.03)}
+    .meta{padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+    .title{font-weight:600;line-height:1.25}
+    .sub{font-size:13px;color:var(--muted)}
+    .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .tag{font-size:12px;color:#cfcfcf;border:1px solid #303033;background:#202023;border-radius:999px;padding:2px 8px}
+
+    .muted{color:var(--muted);font-size:13px}
+    .empty{padding:24px;text-align:center;color:var(--muted)}
+    footer{margin-top:16px;display:flex;justify-content:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Revistas CAPMEX</h1>
+      <div class="bar">
+        <input id="q" type="search" placeholder="Buscar título o etiqueta…" />
+        <select id="year"></select>
+        <select id="sort">
+          <option value="date-desc">Más recientes</option>
+          <option value="date-asc">Más antiguas</option>
+          <option value="title-asc">Título A–Z</option>
+          <option value="title-desc">Título Z–A</option>
+        </select>
+      </div>
+    </header>
+
+    <div id="count" class="muted" style="margin-bottom:8px"></div>
+
+    <section id="grid" class="grid" aria-live="polite"></section>
+    <div id="empty" class="empty" hidden>No hay resultados con los filtros actuales.</div>
+
+    <footer class="muted">Clic en una portada para abrir la revista.</footer>
+  </div>
+
+  <script>
+    // Config
+    const DATA_URL   = 'revistas.json';      // el mismo que actualiza tu admin
+    const VIEWER_URL = 'flipbook2.html';     // visor existente
+
+    // Estado/refs
+    let data = [], filtered = [];
+    const $grid = document.getElementById('grid');
+    const $empty = document.getElementById('empty');
+    const $count = document.getElementById('count');
+    const $q = document.getElementById('q');
+    const $year = document.getElementById('year');
+    const $sort = document.getElementById('sort');
+
+    (async function init(){
+      await fetchData();
+      const years = [...new Set(data.map(d => new Date(d.fecha).getFullYear()))].sort((a,b)=>b-a);
+      $year.innerHTML = `<option value="">Todos los años</option>` + years.map(y=>`<option>${y}</option>`).join('');
+
+      // Estado desde URL (para compartir filtros)
+      const sp = new URLSearchParams(location.search);
+      $q.value = sp.get('q') || '';
+      $year.value = sp.get('year') || '';
+      $sort.value = sp.get('sort') || 'date-desc';
+
+      apply();
+      $q.addEventListener('input', apply);
+      $year.addEventListener('change', apply);
+      $sort.addEventListener('change', apply);
+    })();
+
+    async function fetchData(){
+      try{
+        const res = await fetch(DATA_URL, {cache:'no-store'});
+        data = await res.json();
+      }catch(e){ console.error('No se pudo leer revistas.json', e); data = []; }
+    }
+
+    function apply(){
+      const q = $q.value.trim().toLowerCase();
+      const y = $year.value;
+      const s = $sort.value;
+
+      filtered = data.filter(r=>{
+        const matchesQ = !q || r.titulo.toLowerCase().includes(q) || (r.tags||[]).some(t=>t.toLowerCase().includes(q));
+        const matchesY = !y || new Date(r.fecha).getFullYear().toString() === y;
+        return matchesQ && matchesY;
+      });
+
+      filtered.sort((a,b)=>{
+        if (s==="date-desc") return new Date(b.fecha)-new Date(a.fecha);
+        if (s==="date-asc")  return new Date(a.fecha)-new Date(b.fecha);
+        if (s==="title-asc") return a.titulo.localeCompare(b.titulo,'es');
+        if (s==="title-desc")return b.titulo.localeCompare(a.titulo,'es');
+        return 0;
+      });
+
+      // Actualiza URL (para compartir resultados)
+      const sp = new URLSearchParams();
+      if ($q.value) sp.set('q',$q.value);
+      if ($year.value) sp.set('year',$year.value);
+      if ($sort.value!=='date-desc') sp.set('sort',$sort.value);
+      history.replaceState({}, '', location.pathname + (sp.toString()?`?${sp.toString()}`:''));
+
+      render();
+    }
+
+    function render(){
+      $grid.innerHTML='';
+      if (!filtered.length){ $empty.hidden=false; $count.textContent='0 resultados'; return; }
+      $empty.hidden=true; $count.textContent = `${filtered.length} resultado${filtered.length>1?'s':''}`;
+
+      for (const r of filtered){
+        const a = document.createElement('a');
+        a.className='card';
+        a.href = `${VIEWER_URL}?doc=${encodeURIComponent(r.pdf)}&title=${encodeURIComponent(r.titulo)}`;
+        a.target='_blank'; a.rel='noopener';
+
+        const th = document.createElement('div'); th.className='thumb';
+        const img = document.createElement('img');
+        img.loading='lazy'; img.decoding='async'; img.alt=r.titulo; img.src=r.cover;
+        th.appendChild(img);
+
+        const meta = document.createElement('div'); meta.className='meta';
+        const h3 = document.createElement('div'); h3.className='title'; h3.textContent=r.titulo;
+        const sub = document.createElement('div'); sub.className='sub';
+        const d = new Date(r.fecha); sub.textContent = d.toLocaleDateString('es-MX',{year:'numeric', month:'short'});
+        const tags = document.createElement('div'); tags.className='tags';
+        (r.tags||[]).forEach(t=>{ const s=document.createElement('span'); s.className='tag'; s.textContent=t; tags.appendChild(s); });
+
+        meta.appendChild(h3); meta.appendChild(sub); if((r.tags||[]).length) meta.appendChild(tags);
+
+        a.appendChild(th); a.appendChild(meta);
+        $grid.appendChild(a);
+      }
+    }
+  </script>
+</body>
+</html>

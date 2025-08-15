@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Flipbook — Fijo arriba + alto exacto</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{ --bg:#111; --panel:#1b1b1b; --txt:#eee; --muted:#aaa; --maxw:1200px; --toolbar-h:64px; }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{ margin:0; background:var(--bg); color:var(--txt); font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding-top: var(--toolbar-h); }
+
+  /* Barra fija, siempre por encima */
+  .toolbar{
+    position:fixed; inset:0 0 auto 0; height:auto; z-index:9999;
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    background:var(--panel); padding:10px 16px; box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  .btn{ border:0; border-radius:8px; padding:8px 12px; cursor:pointer; background:#2a2a2a; color:var(--txt); }
+  .btn:hover{ background:#333; }
+  .status{ margin-left:auto; color:var(--muted); font-size:14px; }
+
+  /* Escenario del libro: ocupa EXACTO el alto de la ventana menos barra */
+  #stage{
+    height: calc(100vh - var(--toolbar-h));
+    display:flex; justify-content:center; align-items:center;
+    width:100%; max-width:var(--maxw); margin:0 auto; padding:0 12px;
+  }
+
+  .bookwrap{ position:relative; width:fit-content; height:fit-content; }
+  #flipbook{
+    background:#222; box-shadow:0 10px 30px rgba(0,0,0,.5);
+  }
+  .page{
+    background:#000; overflow:hidden; user-select:none; -webkit-user-select:none; touch-action:none;
+  }
+  .page > img{ width:100%; height:100%; display:block; object-fit:contain; object-position:center; pointer-events:none; }
+
+  #loader{ text-align:center; color:var(--muted); padding:12px; }
+</style>
+</head>
+<body>
+  <!-- Barra fija -->
+  <div class="toolbar" id="toolbar">
+    <button id="prev" class="btn" type="button">⟵ Anterior</button>
+    <button id="next" class="btn" type="button">Siguiente ⟶</button>
+    <button id="first" class="btn" type="button">⟪ Primera</button>
+    <button id="last" class="btn" type="button">Última ⟫</button>
+    <button id="toggleCover" class="btn" type="button">Cubierta: doble</button>
+    <button id="toggleDisplay" class="btn" type="button">Modo: auto</button>
+    <span id="pageInfo" class="status">Página - / -</span>
+  </div>
+
+  <div id="loader">Cargando PDF…</div>
+
+  <main id="stage">
+    <div class="bookwrap" id="bookwrap">
+      <div id="flipbook"></div>
+    </div>
+  </main>
+
+  <!-- Librerías -->
+  <script src="assets/revistas/portadas/libs/jquery/jquery.min.js"></script>
+  <script src="assets/revistas/portadas/libs/turnjs/turn.min.js"></script>
+  <script src="assets/revistas/portadas/libs/pdfjs/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc="assets/revistas/portadas/libs/pdfjs/pdf.worker.min.js";</script>
+
+  <script>
+  // === Config ===
+  const PDF_URL = "assets/revistas/capmex-abril-2025.pdf";
+  const RENDER_SCALE = 1.6;
+
+  // Refs
+  const $toolbar=$("#toolbar"), $stage=$("#stage"), $wrap=$("#bookwrap"), $flip=$("#flipbook"), $loader=$("#loader");
+  const $pageInfo=$("#pageInfo"), $toggleCover=$("#toggleCover"), $toggleDisplay=$("#toggleDisplay");
+
+  // Estado
+  let SINGLE_COVER=false, DISPLAY_MODE="auto";
+  let pageW=0, pageH=0, total=0, images=[];
+
+  const getDisplay = () => DISPLAY_MODE==="single" ? "single"
+                        : DISPLAY_MODE==="double" ? "double"
+                        : (window.innerWidth<900 ? "single" : (SINGLE_COVER ? "single" : "double"));
+
+  // Ajusta variable CSS de alto de barra (para padding-top + stage)
+  function syncToolbarHeight(){
+    const h = Math.ceil($toolbar.outerHeight() || 64);
+    document.documentElement.style.setProperty('--toolbar-h', h + "px");
+  }
+
+  function fit(){
+    if (!pageW || !pageH || !$flip.data('turn')) return;
+
+    syncToolbarHeight();
+    const disp = getDisplay();
+
+    // SIEMPRE escalar contra DOBLE página (uniforme)
+    const baseW = pageW * 2, baseH = pageH;
+
+    const availW = Math.min($stage.innerWidth(), window.innerWidth - 24);
+    const availH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--toolbar-h'));
+    const maxH   = Math.max(220, window.innerHeight - availH); // 100vh - toolbar
+    let scale = Math.min(availW / baseW, maxH / baseH);
+    scale = Math.max(0.3, Math.min(1, scale));
+
+    const bookH = Math.round(pageH * scale);                 // altura uniforme
+    const bookW = (disp==='double') ? Math.round(pageW*2*scale) : Math.round(pageW*scale);
+    const pageWidthScaled = (disp==='double') ? Math.round(bookW/2) : bookW;
+
+    $flip.turn('size', bookW, bookH).turn('display', disp).turn('center');
+    $flip.css({ width: bookW+'px', height: bookH+'px' });
+    $flip.children('.page').css({ width: pageWidthScaled+'px', height: bookH+'px' });
+    $wrap.css({ width: bookW+'px', height: bookH+'px' });
+  }
+
+  function bindUI(){
+    $("#prev").on("click", ()=> $flip.turn("previous"));
+    $("#next").on("click", ()=> $flip.turn("next"));
+    $("#first").on("click",()=> $flip.turn("page",1));
+    $("#last").on("click", ()=> $flip.turn("page", total));
+
+    $toggleCover.on("click", ()=>{
+      SINGLE_COVER=!SINGLE_COVER;
+      $toggleCover.text(`Cubierta: ${SINGLE_COVER?'simple':'doble'}`);
+      fit();
+    });
+
+    $toggleDisplay.on("click", ()=>{
+      DISPLAY_MODE = DISPLAY_MODE==="auto" ? "double" : DISPLAY_MODE==="double" ? "single" : "auto";
+      $toggleDisplay.text(`Modo: ${DISPLAY_MODE}`);
+      fit();
+    });
+
+    // Click/tap lateral (arrastre nativo de Turn.js sigue activo)
+    $wrap.on("click", (ev)=>{
+      // evita si click ocurrió sobre controles (por seguridad)
+      if (ev.target.closest('.toolbar')) return;
+      const rect=$wrap[0].getBoundingClientRect(), x=ev.clientX-rect.left;
+      if (x < rect.width*0.35) $flip.turn("previous"); else $flip.turn("next");
+    });
+
+    $(window).on("resize orientationchange", ()=>{ syncToolbarHeight(); fit(); });
+  }
+
+  (async function init(){
+    try{
+      const pdf = await pdfjsLib.getDocument(PDF_URL).promise;
+      total = pdf.numPages; images = [];
+      for (let p=1; p<=total; p++){
+        const page=await pdf.getPage(p);
+        const vp=page.getViewport({scale:RENDER_SCALE});
+        const c=document.createElement('canvas');
+        c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);
+        await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
+        if (p===1){ pageW=c.width; pageH=c.height; }
+        images.push(c.toDataURL('image/jpeg',0.9));
+        await new Promise(r=>setTimeout(r,0));
+      }
+
+      // Páginas
+      $flip.empty();
+      images.forEach(src => $("<div/>").addClass("page").append($("<img>").attr("src",src)).appendTo($flip));
+
+      // Turn.js con single en bordes, double en interiores
+      $flip.turn({
+        width: pageW*2, height: pageH, autoCenter:true, elevation:50, gradients:true, acceleration:true,
+        display: getDisplay(), page:1,
+        when:{
+          startup: ()=> { syncToolbarHeight(); fit(); },
+          turning: (e, next)=>{
+            const edge = (next===1 || next===total);
+            $flip.turn('display', edge ? 'single' : 'double');
+          },
+          turned:  (e, page)=>{
+            $pageInfo.text(`Página ${page} / ${total}`);
+            fit();
+          }
+        }
+      });
+
+      $loader.remove();
+      bindUI(); fit();
+
+    } catch (err){
+      console.error(err);
+      $loader.text("Error cargando el PDF. Revisa rutas/console.");
+    }
+  })();
+  </script>
+</body>
+</html>
