@@ -1,0 +1,14 @@
+[
+    {
+        "id": "capmex-edicion-2",
+        "titulo": "CAPMEX EDICION 2",
+        "fecha": "2024-12-01",
+        "pdf": "assets/revistas/capmex-edicion-2.pdf",
+        "cover": "assets/revistas/portadas/capmex-edicion-2.jpg",
+        "tags": [
+            "Corporativo",
+            "salud",
+            "inmobiliario"
+        ]
+    }
+]
