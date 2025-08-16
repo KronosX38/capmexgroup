@@ -1,189 +1,359 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<title>Flipbook — Fijo arriba + alto exacto</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-  :root{ --bg:#111; --panel:#1b1b1b; --txt:#eee; --muted:#aaa; --maxw:1200px; --toolbar-h:64px; }
-  *{ box-sizing:border-box; }
-  html,body{ height:100%; }
-  body{ margin:0; background:var(--bg); color:var(--txt); font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding-top: var(--toolbar-h); }
+  <meta charset="utf-8" />
+  <title>Flipbook — CAPMEX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#111; --panel:#1b1b1b; --txt:#eee; --muted:#aaa;
+      --toolbar-h:64px; --maxw:1400px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--txt);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      padding-top:var(--toolbar-h);
+    }
+    .toolbar{
+      position:fixed; inset:0 0 auto 0; z-index:9;
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+      background:var(--panel); padding:10px 16px; box-shadow:0 8px 24px rgba(0,0,0,.35);
+    }
+    .btn{border:0; border-radius:8px; padding:8px 12px; background:#2a2a2a; color:var(--txt); cursor:pointer}
+    .btn:hover{background:#333}
+    .status{margin-left:auto; color:var(--muted); font-size:14px}
 
-  /* Barra fija, siempre por encima */
-  .toolbar{
-    position:fixed; inset:0 0 auto 0; height:auto; z-index:9999;
-    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
-    background:var(--panel); padding:10px 16px; box-shadow:0 8px 24px rgba(0,0,0,.35);
-  }
-  .btn{ border:0; border-radius:8px; padding:8px 12px; cursor:pointer; background:#2a2a2a; color:var(--txt); }
-  .btn:hover{ background:#333; }
-  .status{ margin-left:auto; color:var(--muted); font-size:14px; }
+    #stage{
+      height:calc(100vh - var(--toolbar-h));
+      display:flex; justify-content:center; align-items:center;
+      width:100%; max-width:var(--maxw); margin:0 auto; padding:0 12px;
+    }
+    #flipbook{background:#222; box-shadow:0 10px 30px rgba(0,0,0,.5)}
+    .page{background:#212121; overflow:hidden; user-select:none; -webkit-user-select:none; touch-action:none;}
+    .page img{width:100%; height:100%; display:block; object-fit:contain; object-position:center; pointer-events:none;}
 
-  /* Escenario del libro: ocupa EXACTO el alto de la ventana menos barra */
-  #stage{
-    height: calc(100vh - var(--toolbar-h));
-    display:flex; justify-content:center; align-items:center;
-    width:100%; max-width:var(--maxw); margin:0 auto; padding:0 12px;
-  }
+    /* Desktop: una hoja (sheet) contiene 2 imágenes (izq/der) */
+    .sheet{ display:flex; width:100%; height:100%; }
+    .sheet > img{ width:50%; height:100%; object-fit:contain; object-position:center; }
 
-  .bookwrap{ position:relative; width:fit-content; height:fit-content; }
-  #flipbook{
-    background:#222; box-shadow:0 10px 30px rgba(0,0,0,.5);
-  }
-  .page{
-    background:#000; overflow:hidden; user-select:none; -webkit-user-select:none; touch-action:none;
-  }
-  .page > img{ width:100%; height:100%; display:block; object-fit:contain; object-position:center; pointer-events:none; }
+    /* Móvil: cada mitad ocupa página completa */
+    .page-half img{ width:100%; height:100%; object-fit:contain; object-position:center; }
 
-  #loader{ text-align:center; color:var(--muted); padding:12px; }
-</style>
+    #loader{text-align:center; color:var(--muted); padding:14px}
+    .hidden{display:none!important}
+  </style>
 </head>
 <body>
-  <!-- Barra fija -->
+  <!-- Barra -->
   <div class="toolbar" id="toolbar">
-    <button id="prev" class="btn" type="button">⟵ Anterior</button>
-    <button id="next" class="btn" type="button">Siguiente ⟶</button>
-    <button id="first" class="btn" type="button">⟪ Primera</button>
-    <button id="last" class="btn" type="button">Última ⟫</button>
-    <button id="toggleCover" class="btn" type="button">Cubierta: doble</button>
-    <button id="toggleDisplay" class="btn" type="button">Modo: auto</button>
-    <span id="pageInfo" class="status">Página - / -</span>
+    <button id="prev"   class="btn" type="button">⟵ Anterior</button>
+    <button id="next"   class="btn" type="button">Siguiente ⟶</button>
+    <button id="first"  class="btn" type="button">⟪ Primera</button>
+    <button id="last"   class="btn" type="button">Última ⟫</button>
+    <span id="pageInfo" class="status">Cargando…</span>
   </div>
 
-  <div id="loader">Cargando PDF…</div>
+  <div id="loader">Preparando visor…</div>
 
   <main id="stage">
-    <div class="bookwrap" id="bookwrap">
-      <div id="flipbook"></div>
-    </div>
+    <div id="flipbook"></div>
   </main>
 
   <!-- Librerías -->
   <script src="assets/revistas/portadas/libs/jquery/jquery.min.js"></script>
   <script src="assets/revistas/portadas/libs/turnjs/turn.min.js"></script>
   <script src="assets/revistas/portadas/libs/pdfjs/pdf.min.js"></script>
-  <script>pdfjsLib.GlobalWorkerOptions.workerSrc="assets/revistas/portadas/libs/pdfjs/pdf.worker.min.js";</script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "assets/revistas/portadas/libs/pdfjs/pdf.worker.min.js";
+    }
+  </script>
 
   <script>
-  // === Config ===
-  const PDF_URL = "assets/revistas/capmex-abril-2025.pdf";
-  const RENDER_SCALE = 1.6;
+  // ==========================
+  //  AJUSTES RÁPIDOS (PERILLAS)
+  // ==========================
+  // Calidad/nitidez de render:
+  const SCALE_INNER       = 1.60;   // interiores
+  const SCALE_COVER       = 1.40;   // portada/contraportada
+  // Tamaño mínimo visible para que no quede ilegible:
+  const DESKTOP_MIN_SCALE = 0.62;
+  const MOBILE_MIN_SCALE  = 0.86;
+  // Umbrales de layout:
+  const BREAKPOINT_NARROW = 900;    // < 900 = móvil
+  const SPREAD_THRESHOLD  = 1.20;   // (w/h) > 1.20 => spread (doble)
 
-  // Refs
-  const $toolbar=$("#toolbar"), $stage=$("#stage"), $wrap=$("#bookwrap"), $flip=$("#flipbook"), $loader=$("#loader");
-  const $pageInfo=$("#pageInfo"), $toggleCover=$("#toggleCover"), $toggleDisplay=$("#toggleDisplay");
+  // =============== Parámetros URL ===============
+  const params   = new URLSearchParams(location.search);
+  let   PDF_URL  = params.get('doc')   || "";
+  const TITLE    = params.get('title') || "Revista CAPMEX";
 
-  // Estado
-  let SINGLE_COVER=false, DISPLAY_MODE="auto";
-  let pageW=0, pageH=0, total=0, images=[];
+  if (PDF_URL && !/^https?:\/\//i.test(PDF_URL) && !PDF_URL.startsWith('assets/')) {
+    PDF_URL = 'assets/revistas/' + PDF_URL.replace(/^\/+/, '');
+  }
+  if (!/^https?:\/\/|^assets\/revistas\//i.test(PDF_URL)) PDF_URL = "";
 
-  const getDisplay = () => DISPLAY_MODE==="single" ? "single"
-                        : DISPLAY_MODE==="double" ? "double"
-                        : (window.innerWidth<900 ? "single" : (SINGLE_COVER ? "single" : "double"));
+  try { document.title = `${TITLE} — Flipbook`; } catch {}
 
-  // Ajusta variable CSS de alto de barra (para padding-top + stage)
+  // =============== Refs UI ===============
+  const $toolbar = $("#toolbar"), $stage = $("#stage"), $loader = $("#loader");
+  const $pageInfo = $("#pageInfo");
+  let $flip = $("#flipbook"); // ¡OJO!: let, porque lo re-asignamos cuando reconstruimos
+
+  // =============== Estado ===============
+  let spreads = [];  // [{type:'single', src,w,h} | {type:'spread', left:{src,w,h}, right:{src,w,h}, w,h}]
+  let total   = 0;
+  let canonicalDesktopW=0, canonicalDesktopH=0; // hoja completa
+  let canonicalMobileW =0, canonicalMobileH =0; // media hoja
+  let pageW0=0, pageH0=0;
+
+  const isMobile = () => window.innerWidth < BREAKPOINT_NARROW;
+
   function syncToolbarHeight(){
     const h = Math.ceil($toolbar.outerHeight() || 64);
-    document.documentElement.style.setProperty('--toolbar-h', h + "px");
+    document.documentElement.style.setProperty('--toolbar-h', h + 'px');
   }
 
-  function fit(){
-    if (!pageW || !pageH || !$flip.data('turn')) return;
+  // ==== Helpers gráficos ====
+  function splitCanvas(c){
+    const w=c.width, h=c.height, mid=Math.floor(w/2);
+    const l=document.createElement('canvas'), r=document.createElement('canvas');
+    l.width=mid; l.height=h; r.width=w-mid; r.height=h;
+    l.getContext('2d').drawImage(c, 0,   0, mid,   h, 0, 0, mid,   h);
+    r.getContext('2d').drawImage(c, mid, 0, w-mid, h, 0, 0, w-mid, h);
+    return {
+      left:  {src: l.toDataURL('image/jpeg',0.9), w:l.width, h:l.height},
+      right: {src: r.toDataURL('image/jpeg',0.9), w:r.width, h:r.height}
+    };
+  }
 
-    syncToolbarHeight();
-    const disp = getDisplay();
+  // Tamaño visible calculado desde canónicos (NO “baila” en resize)
+  function computeSize(){
+    const stageW = Math.min($stage.innerWidth(), window.innerWidth - 24);
+    const toolbarH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--toolbar-h')) || 64;
+    const stageH = Math.max(260, window.innerHeight - toolbarH);
 
-    // SIEMPRE escalar contra DOBLE página (uniforme)
-    const baseW = pageW * 2, baseH = pageH;
+    const baseW = isMobile() ? canonicalMobileW : canonicalDesktopW;
+    const baseH = isMobile() ? canonicalMobileH : canonicalDesktopH;
 
-    const availW = Math.min($stage.innerWidth(), window.innerWidth - 24);
-    const availH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--toolbar-h'));
-    const maxH   = Math.max(220, window.innerHeight - availH); // 100vh - toolbar
-    let scale = Math.min(availW / baseW, maxH / baseH);
-    scale = Math.max(0.3, Math.min(1, scale));
+    const scaleW = stageW / baseW;
+    const scaleH = stageH / baseH;
+    const min = isMobile() ? MOBILE_MIN_SCALE : DESKTOP_MIN_SCALE;
+    const scale = Math.max(min, Math.min(scaleW, scaleH));
 
-    const bookH = Math.round(pageH * scale);                 // altura uniforme
-    const bookW = (disp==='double') ? Math.round(pageW*2*scale) : Math.round(pageW*scale);
-    const pageWidthScaled = (disp==='double') ? Math.round(bookW/2) : bookW;
+    return { width: Math.floor(baseW*scale), height: Math.floor(baseH*scale) };
+  }
 
-    $flip.turn('size', bookW, bookH).turn('display', disp).turn('center');
-    $flip.css({ width: bookW+'px', height: bookH+'px' });
-    $flip.children('.page').css({ width: pageWidthScaled+'px', height: bookH+'px' });
-    $wrap.css({ width: bookW+'px', height: bookH+'px' });
+  function applyLayout(force=false){
+    const s = computeSize();
+    if (!s.width || !s.height) return;
+    if ($flip.data('turn')) {
+      $flip.turn('display','single');
+      $flip.turn('size', s.width, s.height);
+      $flip.turn('center');
+      if (force) $flip.turn('update');
+    } else {
+      $flip.css({width:s.width+'px', height:s.height+'px'});
+    }
   }
 
   function bindUI(){
-    $("#prev").on("click", ()=> $flip.turn("previous"));
-    $("#next").on("click", ()=> $flip.turn("next"));
-    $("#first").on("click",()=> $flip.turn("page",1));
-    $("#last").on("click", ()=> $flip.turn("page", total));
+    $("#prev").on("click", () => $flip.turn("previous"));
+    $("#next").on("click", () => $flip.turn("next"));
+    $("#first").on("click", () => $flip.turn("page", 1));
+    $("#last").on("click", () => $flip.turn("page", total));
 
-    $toggleCover.on("click", ()=>{
-      SINGLE_COVER=!SINGLE_COVER;
-      $toggleCover.text(`Cubierta: ${SINGLE_COVER?'simple':'doble'}`);
-      fit();
+    // Click/tap lateral para pasar de página
+    let downX=0,downY=0,drag=false;
+    $stage.on("mousedown touchstart", (ev)=>{
+      const p = (ev.touches && ev.touches[0]) || ev.originalEvent?.touches?.[0] || ev;
+      downX=p.clientX; downY=p.clientY; drag=false;
     });
-
-    $toggleDisplay.on("click", ()=>{
-      DISPLAY_MODE = DISPLAY_MODE==="auto" ? "double" : DISPLAY_MODE==="double" ? "single" : "auto";
-      $toggleDisplay.text(`Modo: ${DISPLAY_MODE}`);
-      fit();
+    $stage.on("mousemove touchmove",(ev)=>{
+      const p = (ev.touches && ev.touches[0]) || ev.originalEvent?.touches?.[0];
+      if (!p) return; if (Math.hypot(p.clientX-downX,p.clientY-downY)>12) drag=true;
     });
-
-    // Click/tap lateral (arrastre nativo de Turn.js sigue activo)
-    $wrap.on("click", (ev)=>{
-      // evita si click ocurrió sobre controles (por seguridad)
-      if (ev.target.closest('.toolbar')) return;
-      const rect=$wrap[0].getBoundingClientRect(), x=ev.clientX-rect.left;
+    $stage.on("mouseup touchend",(ev)=>{
+      if (drag) return;
+      const e = ev.changedTouches?.[0] || ev.originalEvent?.changedTouches?.[0] || ev;
+      const rect = $stage[0].getBoundingClientRect();
+      const x = e.clientX - rect.left;
       if (x < rect.width*0.35) $flip.turn("previous"); else $flip.turn("next");
     });
 
-    $(window).on("resize orientationchange", ()=>{ syncToolbarHeight(); fit(); });
+    // Re-montar al cambiar entre móvil/escritorio para respetar layout
+    $(window).on("resize orientationchange", ()=>{
+      const wasMobile = $flip.data('__isMobile');
+      const nowMobile = isMobile();
+      if (wasMobile !== nowMobile) { mountFlip(); return; }
+      syncToolbarHeight();
+      applyLayout(true);
+    });
+  }
+
+  // --- Scroll para pasar página (rueda del mouse / trackpad) ---
+  function bindWheelPaging() {
+    const el = document.getElementById('stage');
+    if (!el) return;
+
+    let accum = 0;                  // acumula deltas pequeños (trackpad)
+    const THRESH = 120;             // umbral típico de una “muesca” de rueda
+    let lastFlip = 0;
+    const COOLDOWN = 220;           // ms entre flips para no disparar varios
+
+    function handler(ev) {
+      if (!$flip.data('turn')) return;
+
+      // solo si el cursor está sobre el visor
+      const rect = el.getBoundingClientRect();
+      const x = ev.clientX, y = ev.clientY;
+      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return;
+
+      const dx = ev.deltaX || 0;
+      const dy = ev.deltaY || 0;
+      const mainDelta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+
+      accum += mainDelta;
+
+      const now = Date.now();
+      if (Math.abs(accum) >= THRESH && (now - lastFlip) >= COOLDOWN) {
+        if (accum > 0) $flip.turn('next'); else $flip.turn('previous');
+        lastFlip = now;
+        accum = 0;
+        ev.preventDefault();
+      }
+    }
+
+    el.addEventListener('wheel', handler, { passive: false });
+  }
+
+  function mountFlip(){
+    // destruir (si existía) y recrear contenedor
+    if ($flip && $flip.data('turn')) { try { $flip.turn('destroy'); } catch{} }
+    $("#flipbook").replaceWith('<div id="flipbook"></div>');
+    $flip = $("#flipbook");
+
+    $flip.empty();
+    total = 0;
+    const mobile = isMobile();
+    $flip.data('__isMobile', mobile);
+
+    if (mobile){
+      // MÓVIL: cada spread -> dos páginas; single -> una página
+      spreads.forEach(pg=>{
+        if (pg.type==='spread'){
+          $flip.append($('<div class="page page-half"><img/></div>').find('img').attr('src', pg.left.src).end());
+          $flip.append($('<div class="page page-half"><img/></div>').find('img').attr('src', pg.right.src).end());
+          total += 2;
+        } else {
+          $flip.append($('<div class="page page-half"><img/></div>').find('img').attr('src', pg.src).end());
+          total += 1;
+        }
+      });
+      pageW0 = canonicalMobileW; pageH0 = canonicalMobileH;
+    } else {
+      // ESCRITORIO: spread como hoja (dos imágenes dentro); single como página normal
+      spreads.forEach(pg=>{
+        if (pg.type==='spread'){
+          const $sheet = $('<div class="page sheet"></div>');
+          $sheet.append($('<img/>').attr('src', pg.left.src));
+          $sheet.append($('<img/>').attr('src', pg.right.src));
+          $flip.append($sheet); total += 1;
+        } else {
+          $flip.append($('<div class="page"><img/></div>').find('img').attr('src', pg.src).end());
+          total += 1;
+        }
+      });
+      // marcar portada/contra duras (si existen como single)
+      const $pages = $flip.children('.page');
+      if ($pages.length>0)  $pages.first().addClass('hard');
+      if ($pages.length>1)  $pages.last().addClass('hard');
+      pageW0 = canonicalDesktopW; pageH0 = canonicalDesktopH;
+    }
+
+    // Inicializar Turn.js en SINGLE
+    $flip.turn({
+      width: pageW0, height: pageH0,
+      autoCenter:true, elevation:50, gradients:true, acceleration:true,
+      display:'single', page:1,
+      when:{
+        startup: ()=>{ $flip.turn('display','single'); applyLayout(true); },
+        turning: ()=>{ $flip.turn('display','single'); applyLayout(true); },
+        turned:  (e,page)=>{ $pageInfo.text(`${TITLE} — Página ${page} / ${total}`); $flip.turn('display','single'); applyLayout(true); }
+      }
+    });
+
+    syncToolbarHeight(); applyLayout(true);
+    setTimeout(()=>{ try{$flip.turn('page',1); $flip.turn('update');}catch{} },0);
+  }
+
+  async function ensurePdfExists(url){
+    try{
+      const r = await fetch(url, {method:'HEAD', cache:'no-store'});
+      if (!r.ok) throw new Error('HTTP '+r.status);
+    }catch(e){ throw new Error('No se encontró el PDF (404). Verifica la ruta: '+url); }
   }
 
   (async function init(){
     try{
+      if (!PDF_URL){
+        $loader.text("No se especificó el PDF (?doc=). Regresa al catálogo y abre de nuevo.");
+        return;
+      }
+      await ensurePdfExists(PDF_URL);
+
       const pdf = await pdfjsLib.getDocument(PDF_URL).promise;
-      total = pdf.numPages; images = [];
-      for (let p=1; p<=total; p++){
-        const page=await pdf.getPage(p);
-        const vp=page.getViewport({scale:RENDER_SCALE});
-        const c=document.createElement('canvas');
-        c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);
-        await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
-        if (p===1){ pageW=c.width; pageH=c.height; }
-        images.push(c.toDataURL('image/jpeg',0.9));
+      $pageInfo.text(`Cargando ${TITLE}…`);
+      $loader.text(`Cargando y renderizando ${pdf.numPages} páginas…`);
+
+      spreads = [];
+
+      for (let p=1; p<=pdf.numPages; p++){
+        const isEdge = (p===1 || p===pdf.numPages);
+        const scale  = isEdge ? SCALE_COVER : SCALE_INNER;
+
+        const page = await pdf.getPage(p);
+        const vp   = page.getViewport({ scale });
+        const c    = document.createElement('canvas');
+        c.width  = Math.ceil(vp.width);
+        c.height = Math.ceil(vp.height);
+        await page.render({ canvasContext:c.getContext('2d'), viewport:vp }).promise;
+
+        const ratio = c.width / c.height;
+        if (!isEdge && ratio > SPREAD_THRESHOLD){
+          // interior ancho => spread
+          const halves = splitCanvas(c);
+          spreads.push({ type:'spread', left:halves.left, right:halves.right, w:c.width, h:c.height });
+        } else {
+          // portada/contra o interiores verticales => single
+          spreads.push({ type:'single', src:c.toDataURL('image/jpeg',0.9), w:c.width, h:c.height });
+        }
         await new Promise(r=>setTimeout(r,0));
       }
 
-      // Páginas
-      $flip.empty();
-      images.forEach(src => $("<div/>").addClass("page").append($("<img>").attr("src",src)).appendTo($flip));
+      // Fijar canónicos estables desde la primera interior si existe; si no, la primera
+      const firstInterior = spreads.find(pg => pg.type==='spread') || spreads.find(pg => pg.type==='single') || spreads[0];
+      if (firstInterior.type==='spread'){
+        canonicalDesktopW = firstInterior.w;   canonicalDesktopH = firstInterior.h;   // hoja completa
+        canonicalMobileW  = Math.floor(firstInterior.w/2); canonicalMobileH = firstInterior.h; // media hoja
+      } else {
+        canonicalDesktopW = firstInterior.w;   canonicalDesktopH = firstInterior.h;
+        canonicalMobileW  = firstInterior.w;   canonicalMobileH  = firstInterior.h;
+      }
 
-      // Turn.js con single en bordes, double en interiores
-      $flip.turn({
-        width: pageW*2, height: pageH, autoCenter:true, elevation:50, gradients:true, acceleration:true,
-        display: getDisplay(), page:1,
-        when:{
-          startup: ()=> { syncToolbarHeight(); fit(); },
-          turning: (e, next)=>{
-            const edge = (next===1 || next===total);
-            $flip.turn('display', edge ? 'single' : 'double');
-          },
-          turned:  (e, page)=>{
-            $pageInfo.text(`Página ${page} / ${total}`);
-            fit();
-          }
-        }
-      });
+      // Montar el flip (según móvil/escritorio) e inicializar
+      mountFlip();
 
-      $loader.remove();
-      bindUI(); fit();
+      $loader.addClass('hidden');
+      bindUI();
+      bindWheelPaging(); // ← activar scroll para pasar páginas
 
-    } catch (err){
+    }catch(err){
       console.error(err);
-      $loader.text("Error cargando el PDF. Revisa rutas/console.");
+      $loader.text(err.message || "No se pudo cargar el PDF. Verifica la ruta y vuelve a intentar.");
+      $pageInfo.text("Error al cargar el PDF");
     }
   })();
   </script>

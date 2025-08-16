@@ -1,0 +1,44 @@
+[
+    {
+        "id": "capmex-edicion-3",
+        "titulo": "CAPMEX EDICIÓN 3",
+        "fecha": "2025-01-01",
+        "pdf": "assets/revistas/capmex-edicion-3.pdf",
+        "cover": "assets/revistas/portadas/capmex-edicion-3.jpg",
+        "tags": [
+            "CORPORATIVO",
+            "INMOBILIARIO",
+            "SALUD",
+            "CONSERVACION DEL MEDIO AMBIENTE",
+            "SITIOS DE INTERÉS"
+        ]
+    },
+    {
+        "id": "capmex-edicion-2",
+        "titulo": "CAPMEX EDICIÓN 2",
+        "fecha": "2024-12-01",
+        "pdf": "assets/revistas/capmex-edicion-2.pdf",
+        "cover": "assets/revistas/portadas/capmex-edicion-2.jpg",
+        "tags": [
+            "CORPORATIVO",
+            "INMOBILIARIO",
+            "SALUD",
+            "CONSERVACION DEL MEDIO AMBIENTE",
+            "SITIOS DE INTERÉS"
+        ]
+    },
+    {
+        "id": "capmex-edicion-1",
+        "titulo": "CAPMEX EDICIÓN 1",
+        "fecha": "2024-11-01",
+        "pdf": "assets/revistas/capmex-edicion-1.pdf",
+        "cover": "assets/revistas/portadas/capmex-edicion-1.jpg",
+        "tags": [
+            "CORPORATIVO",
+            "INMOBILIARIO",
+            "SALUD",
+            "CONSERVACION DEL MEDIO AMBIENTE",
+            "SITIOS DE INTERÉS"
+        ]
+    }
+]
