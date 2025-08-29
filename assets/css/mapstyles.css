@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  background-color: #353b43;
+  background-color: #eaeaea;
   font-family: "Anaheim", sans-serif;
   color: #737f8a;
   -webkit-font-smoothing: antialiased;
@@ -19,15 +19,16 @@ body {
 .mapadiv{
     width: 50%;
     margin: auto;
+    background-color: #eaeaea;
      
 }
 
 .cls-1 {
-    fill: #0d2c58;
+    fill: #0B2B59;
 }
 
 .estadoscedes {
-    fill: #ff9f43;
+    fill: #9c1714;
 }
 
 .cls-1, .estadoscedes {
@@ -42,23 +43,27 @@ body {
 }
 
 .mipopover {
-  --bs-popover-bg: #333;
-  --bs-popover-border-color: #ff9f43;
-  --bs-popover-header-bg: #ff9f43;
-  --bs-popover-header-color: white;
-  --bs-popover-body-color: #eee;
+  --bs-popover-bg: #eaeaea;
+  --bs-popover-border-color: #0b2b59;
+  --bs-popover-header-bg: #9c1714;
+  --bs-popover-header-color: #eaeaea;
+  --bs-popover-body-color: #0B2B59;
   --bs-popover-max-width: 250px;
  
 }
 
 .border-contact{
-border-bottom: 2px solid #fff;
+border-bottom: 5px solid #0B2B59;
 width: 50%;
 padding: 2px;
 margin-bottom: 10px;
 }
 
-
+.cerrar-popover{
+ color: #eaeaea;
+ font-weight: 700;
+ background-color: #0B2B59;
+}
 
 
 @media(max-width:1200px) {

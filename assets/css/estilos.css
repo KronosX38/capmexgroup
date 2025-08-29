@@ -13,7 +13,7 @@ html {
 body {
   background-color: #353b43;
   font-family: "Anaheim", sans-serif;
-  color: #737f8a;
+  color: #ffffff;
   -webkit-font-smoothing: antialiased;
   position: relative;
 }
@@ -26,7 +26,7 @@ h5,
 h6 {
   font-weight: 400;
   font-family: "Quattrocento Sans", sans-serif;
-  color: #afbac4;
+  color: #ffffff;
 }
 
 p {
@@ -204,11 +204,11 @@ a:hover {
   position: absolute;
   top: -4px;
   width: 50px;
-  background-color: #95c6ff;
+  background-color: rgba(156, 22, 20, 0.916);
 }
 
 .color {
-  color: #6CB670;
+  color: #b66c80;
 }
 
 .sub-title {
@@ -230,11 +230,12 @@ a:hover {
 }
 
 .bg-one {
-  background-color: #353b43;
+  background-color: #eaeaea;
 }
 
+
 .bg-dark {
-  background: #242930;
+  background: #0e5bc7;
 }
 
 .parallax-section {
@@ -440,13 +441,13 @@ a:hover {
   text-transform: capitalize;
   font-weight: 700;
   font-size: 38px;
-  color: #fff;
+  color: #0b2b59;
 }
 .title h2 span {
-  color: #95c6ff;
+  color: #9c1714;
 }
 .title p {
-  color: #666;
+  color: #ffffff;
 }
 .title.title-white h2 {
   color: #fff;
@@ -563,7 +564,7 @@ a:hover {
   Navigation
 ==================================================================*/
 .navigation {
-  background-color: #1d2024;
+  background-color: #0B2B59;
   width: 100%;
   z-index: 99;
   margin-bottom: 0;
@@ -588,7 +589,7 @@ a:hover {
   padding-left: 15px !important;
   padding-right: 15px !important;
   font-size: 20px;
-  color: #737f8a;
+  color: #ffffff;
 }
 
 .nav-drop{
@@ -655,7 +656,8 @@ a:hover {
   font-size: 90px;
   color: #fff;
   text-transform: capitalize;
-  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  font-weight: bold !important;
   margin-bottom: 20px;
 }
 @media (max-width: 992px) {
@@ -719,14 +721,17 @@ a:hover {
   About us section
 ==================================================================*/
 .about .block {
-  background: #242930;
+  background: #0B2B59;
   padding: 30px;
   border-bottom: 3px solid transparent;
   transition: 0.5s all;
   margin-bottom: 20px;
   z-index: 1;
   position: relative;
-
+}
+.p-about{
+  font-size: 18px;
+  color: #fff !important;
 }
 .about .block:hover {
   border-bottom: 10px solid #911c25 !important;
@@ -742,8 +747,8 @@ a:hover {
   background-color: transparent;
   margin: 46.19px auto 60px;
   padding: 20px 0;
-  border-left: 2px solid rgb(149, 198, 255);
-  border-right: 2px solid rgb(149, 198, 255);
+  border-left: 2px solid rgb(255, 255, 255);
+  border-right: 2px solid rgb(255, 255, 255);
   font-size: 50px;
   transform: translateZ(0px);
   transition-duration: 0.3s;
@@ -761,20 +766,20 @@ a:hover {
 }
 .about .block .icon-box:before {
   top: -56.5685px;
-  border-top: 2px solid rgb(149, 198, 255);
-  border-right: 2px solid rgb(149, 198, 255);
+  border-top: 2px solid rgb(255, 255, 255);
+  border-right: 2px solid rgb(255, 255, 255);
 }
 .about .block .icon-box:after {
   bottom: -56.5685px;
-  border-bottom: 2px solid rgb(149, 198, 255);
-  border-left: 2px solid rgb(149, 198, 255);
+  border-bottom: 2px solid rgb(255, 255, 255);
+  border-left: 2px solid rgb(255, 255, 255);
 }
 .about .block .icon-box h3 {
-  color: #afbac4;
+  color: #042441;
 }
 
 .icon-box{
-  color: #95c6ff;
+  color: #ffffff;
 }
 
 .equal-height{
@@ -813,7 +818,7 @@ a:hover {
 }
 .about-2 .content-block .media i {
   font-size: 30px;
-  color: #95c6ff;
+  color: #ffffff;
 }
 .about-2 .content-block .media h4 {
   font-size: 16px;
@@ -882,6 +887,12 @@ a:hover {
 
 .contact-us {
   padding-top: 50px;
+  background-color: #eaeaea !important;
+}
+
+.contact-title{
+  color: #0B2B59;
+  font-weight: 600;
 }
 
 .contact-form {
@@ -889,7 +900,7 @@ a:hover {
 }
 .contact-form .form-control {
   background-color: transparent;
-  border: 1px solid rgba(236, 239, 241, 0.07);
+  border: 1px solid rgba(11, 44, 89, 0.586);
   height: 45px;
 }
 .contact-form textarea.form-control {
@@ -897,19 +908,23 @@ a:hover {
   height: 120px;
 }
 
+.contact-form ::placeholder{
+  color:rgba(11, 44, 89, 0.586);
+}
+
 .contact-form input:hover,
 .contact-form textarea:hover {
-  border-color: #578ecc;
+  border-color: #9c1714;
 }
 
 #contact-submit:hover{
   border-color: #578ecc;
-  background: #0B2B59;
+  background: #9c1714;
 }
 
 #contact-submit {
   border: 1px solid rgba(236, 239, 241, 0.07);
-  background: #111370cb;
+  background: #0B2B59;
   padding: 12px 0;
   width: 100%;
   margin: 0;
@@ -921,10 +936,14 @@ a:hover {
 
 .contact-info p {
   margin-bottom: 25px;
+  color:#0B2B59 ;
+  font-weight: 500;
 }
 
 .con-info {
   margin-bottom: 20px;
+  color:#0B2B59 ;
+  font-weight: bold;
 }
 
 .con-info i,
@@ -964,11 +983,11 @@ a:hover {
 ==================================================================*/
 .service-block {
   padding: 60px 20px;
-  border-left: 1px solid rgba(236, 239, 241, 0.07);
+  border-left: 1px solid rgba(241, 236, 240, 0.07);
   border-top: 1px solid rgba(236, 239, 241, 0.07);
   margin-bottom: 40px;
-  box-shadow: 2px 2px 5px rgba(44, 44, 44, 0.3), 13px 13px 0 rgb(11, 43, 89);;
-  background-color: rgba(112, 112, 112, 0.3);
+  box-shadow: 2px 2px 5px rgba(44, 44, 44, 0.3), 13px 13px 0 rgba(180, 10, 10, 0.875);
+  background-color: #0b2c59fd;
 }
 .service-block .service-icon {
   margin-bottom: 10px;
@@ -976,35 +995,9 @@ a:hover {
 }
 
 /*=================================================================
-  Services section 2
+  Iconos services section
 ==================================================================*/
-.service-2 .service-item {
-  border: 1px solid #eee;
-  margin-bottom: 30px;
-  padding: 50px 20px;
-  transition: all 0.3s ease 0s;
-}
-.service-2 .service-item:hover {
-  box-shadow: 0 5px 65px 0 rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: 0 5px 65px 0 rgba(0, 0, 0, 0.15);
-}
-.service-2 .service-item:hover i {
-  background: #fff;
-  color: #57cbcc;
-}
-.service-2 .service-item i {
-  font-size: 30px;
-  display: inline-block;
-  background: #57cbcc none repeat scroll 0 0;
-  border-radius: 30px;
-  box-shadow: 0 5px 6px 0 rgba(0, 0, 0, 0.1);
-  color: #fff;
-  height: 55px;
-  line-height: 55px;
-  margin-bottom: 20px;
-  width: 55px;
-  transition: all 0.3s ease 0s;
-}
+
 
 .icoimag{
   width: 15%;
@@ -1025,7 +1018,7 @@ a:hover {
   margin-bottom: 4px;
 }
 .social-icon ul li:hover a {
-  background-color: #0B2B59;
+  background-color: #9c1714;
   transform: rotateY(0deg);
 }
 .social-icon ul li:hover a i {
@@ -1035,7 +1028,7 @@ a:hover {
   transform: rotateY(0deg);
 }
 .social-icon ul li a {
-  background-color: #95c6ff;
+  background-color: #eaeaea;
   border: 1px solid transparent;
   display: block;
   height: 70px;
@@ -1044,6 +1037,11 @@ a:hover {
   transform: rotateY(180deg);
   transition: all 400ms ease-out 0s;
 }
+
+#footer {
+  background-color: #0B2B59;
+}
+
 @media (max-width: 768px) {
   .social-icon ul li a {
     width: 55px;
@@ -1051,7 +1049,7 @@ a:hover {
   }
 }
 .social-icon ul li a i {
-  color: #052858;
+  color: #0B2B59;
   display: inline-block;
   font-size: 32px;
   line-height: 70px;
@@ -1105,8 +1103,8 @@ a:hover {
 
 /* Fondo y texto del modal */
 .modal-content {
-  background-color: #131313; /* Cambia al color de fondo principal de tu web */
-  color: #f1f1f1;            /* Texto claro para contraste */
+  background-color: #eaeaea; /* Cambia al color de fondo principal de tu web */
+  color: #0B2B59;            /* Texto claro para contraste */
   border: none;
   border-radius: 12px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
@@ -1114,7 +1112,12 @@ a:hover {
 
 /* Encabezado del modal */
 .modal-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid rgba(156, 22, 20, 0.567);
+  background-color: transparent;
+}
+
+.modal-footer {
+  border-top: 2px solid rgba(156, 22, 20, 0.567);
   background-color: transparent;
 }
 
@@ -1122,7 +1125,7 @@ a:hover {
 .modal-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #ffffff;
+  color: #0B2B59 !important;
 }
 
 /* Modal Body */
@@ -1150,7 +1153,7 @@ a:hover {
 
 /* Ícono alineado con el texto */
 #modalServicioTexto i {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   margin-right: 8px;
   color: #49b0ff; /* Puedes cambiar este color al principal de tu marca */
 }
@@ -1164,9 +1167,10 @@ a:hover {
 
 /* Botón Aceptar (si decides agregar uno personalizado) */
 .btn-modal {
-  background-color: #49b0ff;
-  color: white;
+  background-color: #0B2B59;
+  color: rgb(255, 255, 255);
   border: none;
+  font-weight: 500;
   padding: 8px 20px;
   border-radius: 6px;
   font-weight: 500;
@@ -1174,6 +1178,12 @@ a:hover {
 }
 
 .btn-modal:hover {
-  background-color: #3587c9;
+  background-color: #9c1714;
+  color: #fff;
+  font-weight: 500;
 }
+
+.text-primary {
+  color: #9c1714 !important;
+  font-weight: bold !important;}
 
