@@ -189,11 +189,12 @@ a:hover {
 }
 
 .border {
-  border-top: 2px solid rgba(236, 239, 241, 0.07);
+  border: 2px solid rgba(11, 44, 89, 0.733) !important;
   height: 1px;
   margin: 15px auto 0;
   position: relative;
   width: 30%;
+  
 }
 .border:before {
   background-color: #fff;
