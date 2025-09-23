@@ -1,44 +1,14 @@
 [
     {
-        "id": "capmex-edicion-3",
-        "titulo": "CAPMEX EDICIÓN 3",
-        "fecha": "2025-01-01",
-        "pdf": "assets/revistas/capmex-edicion-3.pdf",
-        "cover": "assets/revistas/portadas/capmex-edicion-3.jpg",
+        "id": "interco-mx-edicion-4",
+        "titulo": "INTERco.MX - EDICION 4",
+        "fecha": "2025-09-01",
+        "pdf": "assets/revistas/interco-mx-edicion-4.pdf",
+        "cover": "assets/revistas/portadas/interco-mx-edicion-4.jpg",
         "tags": [
-            "CORPORATIVO",
-            "INMOBILIARIO",
-            "SALUD",
-            "CONSERVACION DEL MEDIO AMBIENTE",
-            "SITIOS DE INTERÉS"
-        ]
-    },
-    {
-        "id": "capmex-edicion-2",
-        "titulo": "CAPMEX EDICIÓN 2",
-        "fecha": "2024-12-01",
-        "pdf": "assets/revistas/capmex-edicion-2.pdf",
-        "cover": "assets/revistas/portadas/capmex-edicion-2.jpg",
-        "tags": [
-            "CORPORATIVO",
-            "INMOBILIARIO",
-            "SALUD",
-            "CONSERVACION DEL MEDIO AMBIENTE",
-            "SITIOS DE INTERÉS"
-        ]
-    },
-    {
-        "id": "capmex-edicion-1",
-        "titulo": "CAPMEX EDICIÓN 1",
-        "fecha": "2024-11-01",
-        "pdf": "assets/revistas/capmex-edicion-1.pdf",
-        "cover": "assets/revistas/portadas/capmex-edicion-1.jpg",
-        "tags": [
-            "CORPORATIVO",
-            "INMOBILIARIO",
-            "SALUD",
-            "CONSERVACION DEL MEDIO AMBIENTE",
-            "SITIOS DE INTERÉS"
-        ]
+            "Corportativo",
+            "salud"
+        ],
+        "desc": "Descripción de prueba para la revista"
     }
 ]

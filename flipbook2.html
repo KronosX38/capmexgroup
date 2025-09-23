@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>Flipbook — CAPMEX</title>
+  <title>Flipbook — INTERCo.MX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
@@ -51,6 +51,10 @@
 <body>
   <!-- Barra -->
   <div class="toolbar" id="toolbar">
+    <button id="home" class="btn" type="button">
+        <img src="/assets/img/logo-capmex.svg" alt="CAPMEX" style="height:20px; width:auto;">
+        <span>Inicio</span>
+      </button>
     <button id="prev"   class="btn" type="button">⟵ Anterior</button>
     <button id="next"   class="btn" type="button">Siguiente ⟶</button>
     <button id="first"  class="btn" type="button">⟪ Primera</button>
@@ -91,7 +95,7 @@
   // =============== Parámetros URL ===============
   const params   = new URLSearchParams(location.search);
   let   PDF_URL  = params.get('doc')   || "";
-  const TITLE    = params.get('title') || "Revista CAPMEX";
+  const TITLE    = params.get('title') || "Revista INTERCo.MX";
 
   if (PDF_URL && !/^https?:\/\//i.test(PDF_URL) && !PDF_URL.startsWith('assets/')) {
     PDF_URL = 'assets/revistas/' + PDF_URL.replace(/^\/+/, '');
@@ -164,6 +168,11 @@
 
 function bindUI(){
   // Botones
+  // Botón de Inicio
+$("#home").on("click", () => {
+  window.location.href = "../index.html"; 
+  // 👆 ajusta la ruta si tu inicio está en otro lugar, por ejemplo "/" o "../inicio.html"
+});
   $("#prev").on("click", () => $flip.turn("previous"));
   $("#next").on("click", () => $flip.turn("next"));
   $("#first").on("click", () => $flip.turn("page", 1));
