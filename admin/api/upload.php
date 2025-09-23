@@ -62,7 +62,7 @@ if ($gs){
        . '-sOutputFile=' . escapeshellarg($tmpOut) . ' ' . escapeshellarg($pdfPath);
   @exec($cmd, $o, $rc);
   if ($rc === 0 && is_file($tmpOut) && filesize($tmpOut) > 0){
-    @rename($tmpOut, $pdfPath);
+    @rename($tmpOut, $tmpOut); // mantener nombre final ya usado arriba
   } else {
     @unlink($tmpOut);
   }
@@ -76,15 +76,22 @@ if (is_file($JSON_FILE)) {
   if (!is_array($items)) $items = [];
 }
 
+// NUEVO: descripción desde meta (desc o descripcion), limitada a 220 chars
+$desc = trim((string)($meta['desc'] ?? $meta['descripcion'] ?? ''));     // <-- NUEVO
+if ($desc !== '') { $desc = mb_substr($desc, 0, 220); }                  // <-- NUEVO
+
 $item = [
   'id'     => $slug,
   'titulo' => $meta['titulo'] ?? $slug,
   'fecha'  => $meta['fecha'] ?? date('Y-m-01'),
-  // OJO: Rutas públicas (relativas a la raíz del sitio)
+  // Rutas públicas (relativas a la raíz del sitio)
   'pdf'    => 'assets/revistas/'.$slug.'.pdf',
   'cover'  => 'assets/revistas/portadas/'.$slug.'.jpg',
   'tags'   => (isset($meta['tags']) && is_array($meta['tags'])) ? $meta['tags'] : []
 ];
+
+// NUEVO: agregar 'desc' si viene (si prefieres, si no viene igual puedes guardar cadena vacía)
+$item['desc'] = $desc;                                                   // <-- NUEVO
 
 // Insertar/Reemplazar por id
 $replaced = false;
@@ -93,7 +100,7 @@ foreach($items as $i => $it){
 }
 if (!$replaced) array_unshift($items, $item);
 
-// Guardar JSON con bloqueo para evitar “perdidas” por concurrencia
+// Guardar JSON con bloqueo para evitar “pérdidas” por concurrencia
 $fh = @fopen($JSON_FILE, 'c+'); // crea si no existe
 if (!$fh) bail('No se pudo abrir revistas.json', 500);
 flock($fh, LOCK_EX);

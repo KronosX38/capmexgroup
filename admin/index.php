@@ -54,9 +54,16 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
     dialog header{padding:12px 14px;border-bottom:1px solid #2a2a2c}
     dialog .content{padding:14px}
     dialog .row{display:flex;gap:8px;flex-wrap:wrap}
-    dialog input{width:100%;background:#1f1f21;color:var(--txt);border:1px solid #2a2a2c;border-radius:10px;padding:10px 12px}
+    dialog input, dialog textarea{width:100%;background:#1f1f21;color:var(--txt);border:1px solid #2a2a2c;border-radius:10px;padding:10px 12px}
+    dialog textarea{min-height:112px;resize:vertical}
     dialog .actions{display:flex;gap:8px;justify-content:flex-end;padding:12px 14px;border-top:1px solid #2a2a2c}
-    .code{background:#0e0e0f;border:1px solid #2a2a2c;border-radius:10px;padding:10px;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-size:12px;color:#e6e6e6}
+
+    /* Flash dentro del modal */
+    .flash{display:none;margin:0 14px 10px;padding:10px 12px;border-radius:10px;font-size:14px}
+    .flash.ok {display:block;background:#11321a;color:#c7f3d1;border:1px solid #1f5c2f}
+    .flash.err{display:block;background:#3a1316;color:#ffd6d9;border:1px solid #7a1f28}
+    .help{font-size:12px;color:var(--muted);margin-top:6px}
+    .labelrow{display:flex;justify-content:space-between;align-items:center;margin:6px 0 4px}
   </style>
 </head>
 <body>
@@ -88,6 +95,7 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
   <!-- Diálogo: Subir revista -->
   <dialog id="dlgUpload">
     <header><strong>Subir nueva revista</strong></header>
+
     <div class="content">
       <div class="row">
         <input id="uTitle" placeholder="Título (ej. INTERCo.MX No. 2)" />
@@ -96,19 +104,30 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
       <div class="row">
         <input id="uTags" placeholder="Etiquetas (separadas por coma, ej. salud, turismo)" />
       </div>
+
       <div class="row" style="gap:12px;align-items:flex-start;margin-top:8px">
         <div style="flex:1 1 260px">
           <input id="uPdf" type="file" accept="application/pdf" />
-          <div class="muted" style="margin-top:6px">Selecciona el PDF (máx 25 MB)</div>
+          <div class="help">Selecciona el PDF (máx 25 MB)</div>
+
           <canvas id="uCanvas" width="400" height="600" style="margin-top:10px;background:#000;border-radius:10px;border:1px solid #2a2a2c"></canvas>
-          <div class="muted" style="margin-top:6px">Miniatura 400×600 (generada)</div>
+          <div class="help">Miniatura 400×600 (generada)</div>
         </div>
-        <div style="flex:1 1 320px">
-          <div class="muted" style="margin-bottom:6px">Ficha generada</div>
-          <pre id="uJson" class="code" style="height:260px;overflow:auto">{ }</pre>
+
+        <div style="flex:1 1 260px">
+          <div class="labelrow">
+            <label for="revDesc">Descripción (aparece en la portada)</label>
+            <small class="muted"><span id="descCount">0</span>/220</small>
+          </div>
+          <textarea id="revDesc" maxlength="220" placeholder="Escribe un resumen breve de la edición (máx. 220 caracteres)…"></textarea>
+          <div class="help">Este texto se mostrará debajo del título en el carrusel de inicio.</div>
         </div>
       </div>
     </div>
+
+    <!-- Mensaje de estado -->
+    <div id="uFlash" class="flash" role="status" aria-live="polite"></div>
+
     <div class="actions">
       <button id="uCancel" class="btn">Cancelar</button>
       <button id="uSend" class="btn" style="background:#ff9f43;color:#121212;border-color:#cd7e2f;font-weight:600">Guardar en servidor</button>
@@ -126,6 +145,7 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
   <script>
     // ===== CSRF desde PHP =====
     window.CSRF = <?= json_encode($_SESSION['csrf'] ?? '') ?>;
+
     // ===== Config =====
     const DATA_URL   = '../revistas.json';
     const VIEWER_URL = '../flipbook2.html';
@@ -133,23 +153,25 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
 
     // Estado y refs
     let data = [], filtered = [];
-    const $grid = document.getElementById('grid');
+    const $grid  = document.getElementById('grid');
     const $empty = document.getElementById('empty');
     const $count = document.getElementById('count');
-    const $q = document.getElementById('q');
-    const $year = document.getElementById('year');
-    const $sort = document.getElementById('sort');
+    const $q     = document.getElementById('q');
+    const $year  = document.getElementById('year');
+    const $sort  = document.getElementById('sort');
 
     // Subida
-    const dlgU = document.getElementById('dlgUpload');
-    const uTitle = document.getElementById('uTitle');
-    const uMonth = document.getElementById('uMonth');
-    const uTags  = document.getElementById('uTags');
-    const uPdf   = document.getElementById('uPdf');
-    const uCanvas= document.getElementById('uCanvas');
-    const uJson  = document.getElementById('uJson');
-    const uCancel= document.getElementById('uCancel');
-    const uSend  = document.getElementById('uSend');
+    const dlgU    = document.getElementById('dlgUpload');
+    const uTitle  = document.getElementById('uTitle');
+    const uMonth  = document.getElementById('uMonth');
+    const uTags   = document.getElementById('uTags');
+    const uPdf    = document.getElementById('uPdf');
+    const uCanvas = document.getElementById('uCanvas');
+    const revDesc = document.getElementById('revDesc');
+    const uCancel = document.getElementById('uCancel');
+    const uSend   = document.getElementById('uSend');
+    const uFlash  = document.getElementById('uFlash');
+    const descCount = document.getElementById('descCount');
 
     (async function init(){
       await fetchAndRender();
@@ -158,14 +180,32 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
       $sort.addEventListener('change', apply);
 
       document.getElementById('btnUpload').addEventListener('click', ()=>{
-        uTitle.value=''; uMonth.value=''; uTags.value=''; uPdf.value=''; uJson.textContent='{ }';
-        const ctx=uCanvas.getContext('2d'); ctx.fillStyle='#000'; ctx.fillRect(0,0,uCanvas.width,uCanvas.height);
+        // reset modal
+        uTitle.value=''; uMonth.value=''; uTags.value=''; uPdf.value='';
+        revDesc.value=''; updateDescCount();
+        flash('', true, true); // limpia
+        const ctx=uCanvas.getContext('2d');
+        ctx.fillStyle='#000'; ctx.fillRect(0,0,uCanvas.width,uCanvas.height);
         dlgU.showModal();
       });
+
       uCancel.onclick = ()=> dlgU.close();
       uPdf.addEventListener('change', onPdfChosen);
       uSend.addEventListener('click', saveToServer);
+      revDesc.addEventListener('input', updateDescCount);
     })();
+
+    function updateDescCount(){
+      descCount.textContent = (revDesc.value || '').length;
+    }
+
+    function flash(msg, ok=true, clearOnly=false){
+      if (!uFlash) return;
+      if (clearOnly){ uFlash.className='flash'; uFlash.textContent=''; return; }
+      uFlash.textContent = msg;
+      uFlash.className = 'flash ' + (ok ? 'ok' : 'err');
+      setTimeout(()=>{ uFlash.className='flash'; uFlash.textContent=''; }, 3500);
+    }
 
     async function fetchAndRender(){
       try{
@@ -284,18 +324,6 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
       const thumb = fitIntoCanvas(tmp, 400, 600, '#000');
       uCanvas.width = thumb.width; uCanvas.height = thumb.height;
       uCanvas.getContext('2d').drawImage(thumb, 0, 0);
-
-      const slug = slugify(uTitle.value || file.name.replace(/\.pdf$/i,''));
-      const yyyyMM = uMonth.value || new Date().toISOString().slice(0,7);
-      const ficha = {
-        id: slug,
-        titulo: uTitle.value || file.name,
-        fecha: `${yyyyMM}-01`,
-        pdf: `assets/revistas/${slug}.pdf`,
-        cover: `assets/revistas/portadas/${slug}.jpg`,
-        tags: parseTags(uTags.value || '')
-      };
-      uJson.textContent = JSON.stringify(ficha, null, 2);
     }
 
     async function saveToServer(){
@@ -316,6 +344,7 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
         fecha: `${uMonth.value}-01`,
         pdf: `assets/revistas/${slug}.pdf`,
         cover: `assets/revistas/portadas/${slug}.jpg`,
+        desc: (revDesc.value || '').trim(),
         tags: parseTags(uTags.value || '')
       };
 
@@ -328,19 +357,23 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
         const resp = await fetch('api/upload.php', {
           method:'POST',
           body: fd,
-          headers: { 'X-CSRF': window.CSRF } // <<< CSRF
+          headers: { 'X-CSRF': window.CSRF } // CSRF
         });
         const text = await resp.text();
         let result; try { result = JSON.parse(text); } catch { result = null; }
         if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${text}`);
         if (!result || !result.ok) throw new Error(result?.error || text || 'Error servidor');
 
+        // UI OK
+        flash('¡Revista subida correctamente!', true);
+
+        // Actualiza lista y cierra el modal después de una pausa corta
         data.unshift(result.item);
         apply();
-        dlgU.close();
+        setTimeout(()=> dlgU.close(), 1200);
       }catch(err){
         console.error('Upload error:', err);
-        alert('No se pudo guardar en el servidor.\n' + err.message + '\nRevisa permisos de carpetas y PHP.');
+        flash('No se pudo guardar en el servidor: ' + err.message, false);
       }
     }
 
@@ -353,7 +386,7 @@ require_once __DIR__ . '/guard.php'; // obliga sesión iniciada
       try{
         const resp = await fetch('api/delete.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-CSRF': window.CSRF }, // <<< CSRF
+          headers: { 'Content-Type': 'application/json', 'X-CSRF': window.CSRF },
           body: JSON.stringify({ id })
         });
         const text = await resp.text();
