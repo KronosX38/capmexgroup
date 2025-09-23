@@ -1,0 +1,19 @@
+{
+    "magazine": {
+        "auto": true,
+        "cover": "",
+        "doc": "",
+        "title": "",
+        "desc": ""
+    },
+    "youtube": {
+        "url": "https:\/\/www.youtube.com\/watch?v=vSuQkjwhU7s&t=562s",
+        "title": "Ayuda: ¡Se transformó en directo! ¡Está creciendo descomunalmente!",
+        "desc": "Un extraño caso de un supuesto meteorito está dando de que hablar, un jóven asegura haber recuperado una pequeña roca que cayó en su jardín y de la que ha comenzado a crecer algo inquietante."
+    },
+    "podcast": {
+        "url": "https:\/\/open.spotify.com\/episode\/2abcXYZ...",
+        "title": "Estrategias patrimoniales",
+        "desc": "Conversación sobre vehículos de inversión."
+    }
+}
