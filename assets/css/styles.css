@@ -1,6 +1,6 @@
     :root{
       --nav-bg:#1e2f55;           /* azul barra */
-      --nav-bg-alpha: rgba(47,71,100,.85);
+      --nav-bg-alpha: #1f3a5ce4; /* azul barra con alpha */
       --nav-ink:#ffffff;
       --hero-overlay: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.45));
       --capmex-blue:#1f3a5c;
@@ -99,7 +99,7 @@
       font-size: 58px;
     }
     .service-title{
-      margin:0; font-weight:700; font-size: clamp(16px,2.4vw,18px); color:#fff;
+      margin:0; font-weight:700; font-size: clamp(16px,2.4vw,18px); color:#1f3a5c;
     }
 
     /* Espaciado de filas como en la referencia */
@@ -332,9 +332,13 @@
   margin: 14px 0;
 }
 
+.contacto-item a{
+  color: #1f3a5c !important;
+}
+
 .contacto-correos a {
   display: block;
-  color: #fff;
+  color: #1f3a5c !important;
   text-decoration: none;
   line-height: 0.4; /* reduce espacio vertical entre los enlaces */
 }
